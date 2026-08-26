@@ -13,12 +13,8 @@ import net.kdt.pojavlaunch.R;
 import net.kdt.pojavlaunch.Tools;
 import net.kdt.pojavlaunch.extra.ExtraConstants;
 import net.kdt.pojavlaunch.extra.ExtraCore;
-import net.kdt.pojavlaunch.value.LauncherAccount;
-import net.kdt.pojavlaunch.value.AccountManager;
 
 import java.io.File;
-import java.nio.charset.StandardCharsets;
-import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -37,7 +33,7 @@ public class LocalLoginFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         mUsernameEditText = view.findViewById(R.id.login_edit_email);
         
-        // Standard Online/Local Login Button
+        // Standard Local Login Listener
         view.findViewById(R.id.login_button).setOnClickListener(v -> {
             if(!checkEditText()) {
                 Context context = v.getContext();
@@ -51,23 +47,12 @@ public class LocalLoginFragment extends Fragment {
             Tools.swapFragment(requireActivity(), MainMenuFragment.class, MainMenuFragment.TAG, null);
         });
 
-        // Offline Mode (Power Outage) Button
+        // Offline Mode (Power Outage) Direct Bypass Listener
         View btnOffline = view.findViewById(R.id.btn_offline_login);
         if (btnOffline != null) {
             btnOffline.setOnClickListener(v -> {
                 String inputName = mUsernameEditText.getText().toString().trim();
                 String offlineUsername = inputName.isEmpty() ? "OfflinePlayer" : inputName;
-                
-                UUID offlineUuid = UUID.nameUUIDFromBytes(("OfflinePlayer:" + offlineUsername).getBytes(StandardCharsets.UTF_8));
-
-                LauncherAccount offlineAccount = new LauncherAccount();
-                offlineAccount.username = offlineUsername;
-                offlineAccount.sub = offlineUuid.toString();
-                offlineAccount.accessToken = "0";
-                offlineAccount.isMicrosoft = false;
-
-                AccountManager.getInstance().addAccount(offlineAccount);
-                AccountManager.getInstance().setCurrentAccount(offlineAccount.username);
 
                 ExtraCore.setValue(ExtraConstants.MOJANG_LOGIN_TODO, new String[]{ offlineUsername, "" });
                 Tools.swapFragment(requireActivity(), MainMenuFragment.class, MainMenuFragment.TAG, null);
