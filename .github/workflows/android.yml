@@ -30,10 +30,16 @@ jobs:
         run: |
           sdkmanager --install "ndk;25.2.9519653" "cmake;3.22.1" "build-tools;34.0.0"
 
+      - name: Fetch Bundled JRE Runtimes
+        run: |
+          mkdir -p app_pojavlauncher/src/main/assets/components/jre/
+          cd app_pojavlauncher/src/main/assets/components/jre/
+          curl -L -O https://github.com/PojavLauncherTeam/PojavLauncher/releases/download/v3.3.1.1/jre8-pojav.tar.xz || true
+
       - name: Grant Execute Permissions
         run: chmod +x gradlew
 
-      - name: Build Debug APK
+      - name: Build Debug APK with Bundled Java
         run: ./gradlew assembleDebug --stacktrace --no-daemon
         env:
           JAVA_OPTS: "-Xmx3072m"
